@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-ui
+  namespace: team-backend-team
+  labels:
+    app: backend-ui
+    component: frontend
+  annotations:
+    commit-sha: 8b514a1cb354
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-ui
+  template:
+    metadata:
+      labels:
+        app: backend-ui
+        component: frontend
+    spec:
+      containers:
+      - name: backend-ui
+        image: backend-app:local      
+        ports:
+        - containerPort: 80
+        env:
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---     
